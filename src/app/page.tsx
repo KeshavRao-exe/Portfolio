@@ -84,33 +84,56 @@ export default function Portfolio() {
   const [cursorInViewport, setCursorInViewport] = useState(false);
   const [hoveringInteractive, setHoveringInteractive] = useState(false);
   const [hoveringDarkSurface, setHoveringDarkSurface] = useState(false);
+  const [focusTab, setFocusTab] = useState<"aiml" | "fullstack">("aiml");
+  const [activeNavSection, setActiveNavSection] = useState<"projects" | "about">("projects");
   const reduceMotion = useReducedMotion();
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
   const smoothX = useSpring(cursorX, { stiffness: 500, damping: 36, mass: 0.12 });
   const smoothY = useSpring(cursorY, { stiffness: 500, damping: 36, mass: 0.12 });
   const heroRef = useRef<HTMLElement>(null);
+  const experienceTimelineRef = useRef<HTMLDivElement>(null);
   const emailCopyResetRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ["start start", "end start"],
   });
+  const { scrollYProgress: experienceTimelineProgress } = useScroll({
+    target: experienceTimelineRef,
+    offset: ["start 0.75", "end 0.25"],
+  });
   const heroY = useTransform(scrollYProgress, [0, 1], [0, 40]);
   const heroOpacity = useTransform(scrollYProgress, [0, 1], [1, 0.86]);
+  const timelineFillScale = useSpring(experienceTimelineProgress, {
+    stiffness: 120,
+    damping: 24,
+    mass: 0.25,
+  });
 
   const firstName = "Keshav";
   const lastName = "Rao";
   const profileImageSrc = "/assets/images/Photo.jpg";
-  const focusAreas = [
+  const aiMlFocusAreas = [
     "Distributed Systems",
     "AI Agents",
-    "Cloud Architecture",
     "RAG Platforms",
     "LLM Applications",
     "Model Optimization",
     "MLOps",
-    "API Orchestration",
+    "Prompt Engineering",
   ];
+  const fullStackFocusAreas = [
+    "React",
+    "TypeScript",
+    "Node.js",
+    "REST APIs",
+    "Microservices",
+    "Cloud Architecture",
+    "API Orchestration",
+    "Docker",
+  ];
+  const focusAreas = [...aiMlFocusAreas, ...fullStackFocusAreas];
+  const selectedFocusAreas = focusTab === "aiml" ? aiMlFocusAreas : fullStackFocusAreas;
   const activeExperience =
     activeExperienceIndex !== null ? resumeData.experience[activeExperienceIndex] : null;
   const publication = resumeData.extra.find((item) => item.type === "Publication")?.content;
@@ -134,6 +157,26 @@ export default function Portfolio() {
     window.localStorage.setItem("theme", "light");
   }, []);
 
+  useEffect(() => {
+    const projects = document.getElementById("projects");
+    const about = document.getElementById("about");
+    if (!projects || !about) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const mostVisible = [...entries].sort(
+          (a, b) => b.intersectionRatio - a.intersectionRatio,
+        )[0];
+        if (!mostVisible) return;
+        if (mostVisible.target.id === "projects") setActiveNavSection("projects");
+        if (mostVisible.target.id === "about") setActiveNavSection("about");
+      },
+      { threshold: [0.25, 0.45, 0.65] },
+    );
+    observer.observe(projects);
+    observer.observe(about);
+    return () => observer.disconnect();
+  }, []);
+
   const handleSectionScroll = (
     event: React.MouseEvent<HTMLAnchorElement>,
     sectionId: string,
@@ -155,6 +198,13 @@ export default function Portfolio() {
       // Keep UX silent on clipboard failures; user can still read the email text.
       setEmailCopied(false);
     }
+  };
+
+  const handleEmailLinkClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    const mailtoUrl = `mailto:${resumeData.basics.email}`;
+    // Trigger email compose reliably across browsers/webviews.
+    window.location.href = mailtoUrl;
   };
 
   useEffect(() => {
@@ -218,19 +268,39 @@ export default function Portfolio() {
   }, [cursorX, cursorY]);
 
     return (
-    <main className="h-screen snap-y snap-mandatory overflow-y-auto scroll-smooth bg-[#ececec] text-zinc-900 transition-colors duration-500">
+    <main className="h-screen overflow-y-auto scroll-smooth bg-[#ececec] text-zinc-900 transition-colors duration-500">
       {showCursor && cursorInViewport && (
-        <motion.div
-          aria-hidden="true"
-          className="pointer-events-none fixed left-0 top-0 z-[200] h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full"
-          style={{
-            x: smoothX,
-            y: smoothY,
-            backgroundColor: hoveringDarkSurface ? "#ffffff" : hoveringInteractive ? "#84ff37" : "#111111",
-          }}
-          animate={{ scale: hoveringInteractive ? 1.5 : 1 }}
-          transition={{ duration: 0.16 }}
-        />
+        <>
+          <motion.div
+            aria-hidden="true"
+            className="pointer-events-none fixed left-0 top-0 z-[199] h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full"
+            style={{ x: smoothX, y: smoothY, backgroundColor: "rgba(132,255,55,0.18)" }}
+            animate={{
+              opacity: hoveringInteractive ? 1 : 0,
+              scale: hoveringInteractive ? 1 : 0.6,
+              boxShadow: hoveringInteractive
+                ? "0 0 0 8px rgba(132,255,55,0.14), 0 0 26px rgba(132,255,55,0.45)"
+                : "0 0 0 0 rgba(132,255,55,0), 0 0 0 rgba(132,255,55,0)",
+            }}
+            transition={{ duration: 0.2 }}
+          />
+          <motion.div
+            aria-hidden="true"
+            className="pointer-events-none fixed left-0 top-0 z-[200] h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2"
+            style={{
+              x: smoothX,
+              y: smoothY,
+              backgroundColor: hoveringDarkSurface ? "#ffffff" : hoveringInteractive ? "#84ff37" : "#111111",
+            }}
+            animate={{
+              scale: hoveringInteractive ? 1.25 : 1,
+              clipPath: hoveringInteractive
+                ? "polygon(50% 6%, 8% 94%, 92% 94%)"
+                : "circle(50% at 50% 50%)",
+            }}
+            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+          />
+        </>
       )}
 
       <AnimatePresence>
@@ -275,7 +345,7 @@ export default function Portfolio() {
         )}
       </AnimatePresence>
 
-      <div className="relative min-h-screen snap-start overflow-hidden">
+      <div className="relative min-h-screen overflow-hidden">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(130%_90%_at_100%_0%,rgba(255,255,255,0.75),transparent_65%)]" />
         <div className="pointer-events-none absolute inset-0 opacity-85 [background:repeating-radial-gradient(ellipse_at_112%_-8%,rgba(255,255,255,0.9)_0px,rgba(255,255,255,0.9)_3px,transparent_3px,transparent_66px)]" />
 
@@ -290,20 +360,44 @@ export default function Portfolio() {
               <div className="grid h-9 w-9 place-items-center rounded-md bg-lime-400 text-lg font-black text-zinc-900">K</div>
             </div>
 
-            <nav className="hidden items-center gap-10 text-[22px] font-medium tracking-[-0.03em] lg:flex">
+            <nav className="hidden items-center gap-4 text-[22px] font-medium tracking-[-0.03em] lg:flex">
               <a
                 href="#projects"
-                onClick={(event) => handleSectionScroll(event, "projects")}
-                className="transition-opacity hover:opacity-60"
+                onClick={(event) => {
+                  setActiveNavSection("projects");
+                  handleSectionScroll(event, "projects");
+                }}
+                className="relative rounded-full px-5 py-2 transition-opacity hover:opacity-90"
               >
-                Projects
+                {activeNavSection === "projects" && (
+                  <motion.span
+                    layoutId="nav-active-pill"
+                    className="absolute inset-0 rounded-full bg-zinc-900 text-white"
+                    transition={{ type: "spring", stiffness: 380, damping: 30, mass: 0.55 }}
+                  />
+                )}
+                <span className={`relative z-10 ${activeNavSection === "projects" ? "text-white" : ""}`}>
+                  Projects
+                </span>
               </a>
               <a
                 href="#about"
-                onClick={(event) => handleSectionScroll(event, "about")}
-                className="transition-opacity hover:opacity-60"
+                onClick={(event) => {
+                  setActiveNavSection("about");
+                  handleSectionScroll(event, "about");
+                }}
+                className="relative rounded-full px-5 py-2 transition-opacity hover:opacity-90"
               >
-                About & Contact
+                {activeNavSection === "about" && (
+                  <motion.span
+                    layoutId="nav-active-pill"
+                    className="absolute inset-0 rounded-full bg-zinc-900 text-white"
+                    transition={{ type: "spring", stiffness: 380, damping: 30, mass: 0.55 }}
+                  />
+                )}
+                <span className={`relative z-10 ${activeNavSection === "about" ? "text-white" : ""}`}>
+                  About & Contact
+                </span>
               </a>
             </nav>
 
@@ -312,7 +406,7 @@ export default function Portfolio() {
               <a
                 href="#internet"
                 onClick={(event) => handleSectionScroll(event, "internet")}
-                className="rounded-full bg-zinc-900 px-6 py-3 text-sm font-medium text-white transform-gpu translate-y-0 will-change-transform transition-[transform,box-shadow,background-color,color,border-color] duration-500 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:bg-zinc-800 hover:shadow-[0_10px_24px_rgba(15,23,42,0.25)]"
+                className="smooth-hover-green rounded-full bg-zinc-900 px-6 py-3 text-sm font-medium text-white hover:bg-zinc-800"
               >
                 Contact me
               </a>
@@ -423,14 +517,14 @@ export default function Portfolio() {
               <a
                 href="#projects"
                 onClick={(event) => handleSectionScroll(event, "projects")}
-                className="group inline-flex items-center gap-3 rounded-full bg-lime-400 px-8 py-4 text-[28px] font-medium tracking-[-0.03em] text-zinc-900 shadow-[0_12px_40px_rgba(132,255,55,0.4)] transform-gpu translate-y-0 will-change-transform transition-[transform,box-shadow,background-color,color,border-color] duration-500 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:shadow-[0_18px_44px_rgba(132,255,55,0.5)]"
+                className="smooth-hover-green group inline-flex items-center gap-3 rounded-full bg-lime-400 px-8 py-4 text-[28px] font-medium tracking-[-0.03em] text-zinc-900 shadow-[0_12px_40px_rgba(132,255,55,0.4)]"
               >
                 See what I can do
                 <span className="grid h-9 w-9 place-items-center rounded-full bg-white/80 transform-gpu rotate-0 transition-transform duration-500 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] group-hover:rotate-45"><ArrowUpRight size={18} /></span>
               </a>
               <a
                 href={`mailto:${resumeData.basics.email}`}
-                className="inline-flex items-center gap-2 rounded-full border border-zinc-300 bg-white px-5 py-3 text-sm text-zinc-700 transform-gpu translate-y-0 will-change-transform transition-[transform,box-shadow,background-color,color,border-color] duration-500 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:shadow-[0_10px_22px_rgba(15,23,42,0.12)]"
+                className="smooth-hover-green inline-flex items-center gap-2 rounded-full border border-zinc-300 bg-white px-5 py-3 text-sm text-zinc-700"
               >
                 <Mail size={16} />
                 {resumeData.basics.email}
@@ -443,7 +537,7 @@ export default function Portfolio() {
       <motion.section
         id="focus"
         data-dark-surface="true"
-        className="relative min-h-screen snap-start overflow-hidden border-t border-zinc-800 bg-[#07090d] px-6 py-16 text-white md:px-10 lg:px-14"
+        className="relative min-h-screen overflow-hidden border-t border-zinc-800 bg-[#07090d] px-6 py-16 text-white md:px-10 lg:px-14"
         initial={{ opacity: 0, y: 24 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
@@ -470,10 +564,7 @@ export default function Portfolio() {
                   >
                     ✶
                   </motion.span>
-                  <span>
-                    <span className="text-lime-400">{item.split(" ")[0]}</span>{" "}
-                    <span className="text-zinc-100">{item.split(" ").slice(1).join(" ")}</span>
-                  </span>
+                  <span className="text-zinc-100">{item}</span>
                 </div>
               ))}
             </motion.div>
@@ -484,8 +575,51 @@ export default function Portfolio() {
             Building reliable systems across AI, cloud, and distributed architecture.
           </h2>
 
+          <div className="mt-7 inline-flex rounded-full border border-zinc-700 bg-zinc-900/55 p-1">
+            <button 
+              type="button"
+              onClick={() => setFocusTab("aiml")}
+              className="relative rounded-full px-5 py-2 text-sm font-medium"
+            >
+              {focusTab === "aiml" && (
+                <motion.span
+                  layoutId="focus-selector-pill"
+                  className="absolute inset-0 rounded-full bg-lime-400 shadow-[0_0_24px_rgba(132,255,55,0.35)]"
+                  transition={{ type: "spring", stiffness: 360, damping: 30, mass: 0.55 }}
+                />
+              )}
+              <span
+                className={`relative z-10 transition-colors duration-300 ${
+                  focusTab === "aiml" ? "text-zinc-900" : "text-zinc-300 hover:text-white"
+                }`}
+              >
+                AI/ML
+              </span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setFocusTab("fullstack")}
+              className="relative rounded-full px-5 py-2 text-sm font-medium"
+            >
+              {focusTab === "fullstack" && (
+                <motion.span
+                  layoutId="focus-selector-pill"
+                  className="absolute inset-0 rounded-full bg-lime-400 shadow-[0_0_24px_rgba(132,255,55,0.35)]"
+                  transition={{ type: "spring", stiffness: 360, damping: 30, mass: 0.55 }}
+                />
+              )}
+              <span
+                className={`relative z-10 transition-colors duration-300 ${
+                  focusTab === "fullstack" ? "text-zinc-900" : "text-zinc-300 hover:text-white"
+                }`}
+              >
+                Full Stack Development
+              </span>
+            </button>
+          </div>
+
           <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {focusAreas.map((area, i) => (
+            {selectedFocusAreas.map((area, i) => (
               <motion.div 
                 key={area}
                 initial={reduceMotion ? undefined : { opacity: 0, y: 18 }}
@@ -503,7 +637,7 @@ export default function Portfolio() {
 
       <motion.section
         id="education"
-        className="min-h-screen snap-start border-t border-zinc-300/80 bg-[#efefef] px-6 py-20 md:px-10 lg:flex lg:items-center lg:px-14"
+        className="min-h-screen border-t border-zinc-300/80 bg-[#efefef] px-6 py-20 md:px-10 lg:flex lg:items-center lg:px-14"
         initial={{ opacity: 0, y: 36 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7 }}
@@ -566,92 +700,223 @@ export default function Portfolio() {
       <motion.section
         id="projects"
         data-dark-surface="true"
-        className="min-h-screen snap-start border-t border-zinc-800 bg-[#07090d] px-6 py-20 text-white md:px-10 lg:px-14"
+        className="relative min-h-screen border-t border-zinc-800 bg-[#07090d] px-6 py-20 text-white md:px-10 lg:px-14"
         initial={{ opacity: 0, y: 36 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7 }}
         viewport={{ once: true, amount: 0.18 }}
       >
+              <motion.div 
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 -top-20 h-24 bg-gradient-to-b from-zinc-200/10 to-transparent blur-xl"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, amount: 0.12 }}
+          transition={{ duration: 0.7 }}
+        />
         <div className="mx-auto w-full max-w-[1320px]">
-          <p className="text-xs uppercase tracking-[0.2em] text-zinc-400">{"{02} - Featured projects"}</p>
-          <h2 className="mt-3 text-4xl font-semibold tracking-[-0.04em] md:text-6xl">I blend research and engineering</h2>
-          <div className="relative mt-12 pb-[40vh]">
+          <div className="sticky top-4 z-20 bg-[#07090d]/95 pb-6 backdrop-blur-sm">
+            <p className="text-xs uppercase tracking-[0.2em] text-zinc-400">{"{02} - Featured projects"}</p>
+            <h2 className="mt-3 text-4xl font-semibold tracking-[-0.04em] md:text-6xl">I blend research and engineering</h2>
+          </div>
+          <div className="relative mt-12 pb-[24vh]">
             {resumeData.projects.map((project, i) => (
-              <div key={project.title} className="relative h-[62vh]">
-                <motion.article
-                  initial={reduceMotion ? undefined : { opacity: 0, y: 24 }}
-                  whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.35 }}
-                  transition={{ duration: 0.55, delay: i * 0.06 }}
-                  className="sticky flex h-[52vh] flex-col justify-between rounded-[28px] border border-zinc-800 bg-zinc-900/92 p-8 backdrop-blur-sm"
-                  style={{
-                    zIndex: 40 + i,
-                    top: "92px",
-                  }}
+              <motion.article
+                key={project.title}
+                initial={reduceMotion ? undefined : { opacity: 0, y: 24 }}
+                whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.35 }}
+                transition={{ duration: 0.55, delay: i * 0.06 }}
+                className={`sticky flex h-[56vh] flex-col justify-between rounded-[28px] border border-lime-400/35 bg-zinc-900/92 p-8 shadow-[0_0_0_1px_rgba(132,255,55,0.14),0_0_36px_rgba(132,255,55,0.12)] backdrop-blur-sm transition-[box-shadow,border-color] duration-500 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] hover:border-lime-400/55 hover:shadow-[0_0_0_1px_rgba(132,255,55,0.24),0_0_56px_rgba(132,255,55,0.2)] ${
+                  i === 0 ? "mt-0" : "mt-[30vh]"
+                }`}
+                style={{
+                  zIndex: 40 + i,
+                  top: "250px",
+                }}
               >
-                <div>
-                    <h3 className="text-3xl font-semibold tracking-[-0.03em]">{project.title}</h3>
-                    <p className="mt-3 text-base text-zinc-400">{project.stack}</p>
-                    <ul className="mt-7 space-y-3 text-zinc-300">
-                      {project.bullets.map((point) => (
-                        <li key={point} className="text-lg leading-relaxed">- {point}</li>
+                <motion.div
+                  initial={reduceMotion ? undefined : { opacity: 0, y: 12 }}
+                  whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.4 }}
+                  transition={{ duration: 0.5, delay: 0.05 }}
+                >
+                  <motion.h3
+                    initial={reduceMotion ? undefined : { opacity: 0, y: 10 }}
+                    whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.4 }}
+                    transition={{ duration: 0.45, delay: 0.08 }}
+                    className="text-3xl font-semibold tracking-[-0.03em]"
+                  >
+                    {project.title}
+                  </motion.h3>
+                  <motion.p
+                    initial={reduceMotion ? undefined : { opacity: 0, y: 8 }}
+                    whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.4 }}
+                    transition={{ duration: 0.45, delay: 0.12 }}
+                    className="mt-3 text-base text-zinc-400"
+                  >
+                    {project.stack}
+                  </motion.p>
+                  <ul className="mt-7 space-y-3 text-zinc-300">
+                    {project.bullets.map((point, bulletIndex) => (
+                      <motion.li
+                        key={point}
+                        initial={reduceMotion ? undefined : { opacity: 0, y: 8 }}
+                        whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+                        viewport={{ once: true, amount: 0.4 }}
+                        transition={{ duration: 0.4, delay: 0.16 + bulletIndex * 0.05 }}
+                        className="text-lg leading-relaxed"
+                      >
+                        - {point}
+                      </motion.li>
                     ))}
                   </ul>
+                </motion.div>
+                <div className="inline-flex w-fit items-center rounded-full border border-zinc-700 px-4 py-2 text-xs uppercase tracking-[0.16em] text-zinc-400">
+                  Project {i + 1} / {resumeData.projects.length}
                 </div>
-                  <div className="inline-flex w-fit items-center rounded-full border border-zinc-700 px-4 py-2 text-xs uppercase tracking-[0.16em] text-zinc-400">
-                    Project {i + 1} / {resumeData.projects.length}
-                  </div>
-                </motion.article>
-                </div>
+              </motion.article>
             ))}
           </div>
                 </div>
       </motion.section>
 
       <motion.section
+        id="experience"
+        className="relative min-h-screen overflow-hidden border-t border-zinc-300/80 bg-[#ececec] px-6 py-20 md:px-10 lg:px-14"
+        initial={{ opacity: 0, y: 34 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7 }}
+        viewport={{ once: true, amount: 0.12 }}
+      >
+        <motion.div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 -top-20 h-24 bg-gradient-to-b from-zinc-300/25 to-transparent blur-xl"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, amount: 0.12 }}
+          transition={{ duration: 0.7 }}
+        />
+        <div className="pointer-events-none absolute inset-0 opacity-80">
+          <div className="absolute right-0 top-0 h-80 w-80 border border-zinc-200/90" />
+          <div className="absolute left-[18%] top-[45%] h-80 w-80 border border-zinc-200/90" />
+          <div className="absolute inset-0 [background-image:linear-gradient(to_right,rgba(24,24,24,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(24,24,24,0.04)_1px,transparent_1px)] [background-size:150px_150px]" />
+            </div>
+
+        <div className="relative z-10 mx-auto w-full max-w-[1320px]">
+          <p className={sectionLabelStyle + ""}>{"{02} - Experience"}</p>
+          <h2 className="mt-3 max-w-3xl text-4xl font-semibold tracking-[-0.04em] md:text-6xl">
+            Systems, products, and research shipped in production
+          </h2>
+
+          <div ref={experienceTimelineRef} className="relative mt-12 pb-4">
+            <span className="pointer-events-none absolute bottom-0 left-4 top-0 w-1 rounded-full bg-zinc-300 md:left-1/2 md:-translate-x-1/2" />
+            <motion.span
+              className="pointer-events-none absolute bottom-0 left-4 top-0 w-1 origin-top rounded-full bg-zinc-800 md:left-1/2 md:-translate-x-1/2"
+              style={{ scaleY: timelineFillScale }}
+            />
+
+            {resumeData.experience.map((exp, i) => {
+              const isRight = i % 2 === 1;
+              return (
+                <motion.button
+                  type="button"
+                  key={`${exp.company}-${exp.role}`}
+                  onClick={() => setActiveExperienceIndex(i)}
+                  initial={reduceMotion ? undefined : { opacity: 0, y: 28, x: isRight ? 84 : -84, scale: 0.98 }}
+                  whileInView={reduceMotion ? undefined : { opacity: 1, y: 0, x: 0, scale: 1 }}
+                  whileHover={
+                    reduceMotion
+                      ? undefined
+                      : {
+                          y: -3,
+                          boxShadow:
+                            "0 0 0 1px rgba(132,255,55,0.35), 0 18px 40px rgba(132,255,55,0.22)",
+                        }
+                  }
+                  viewport={{ once: false, amount: 0.5 }}
+                  transition={{ duration: 0.58, delay: i * 0.05, ease: [0.22, 1, 0.36, 1] }}
+                  className={`group relative mb-8 block w-full rounded-2xl border border-lime-300 bg-white p-6 text-left shadow-[0_8px_22px_rgba(15,23,42,0.08)] transform-gpu will-change-transform transition-[background-color,border-color,color] duration-500 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] hover:border-lime-400 md:mb-10 md:w-[calc(50%-3.1rem)] ${
+                    isRight ? "md:ml-auto" : ""
+                  }`}
+                >
+                  {isRight ? (
+                    <span className="pointer-events-none absolute left-[-12px] top-1/2 hidden h-6 w-6 -translate-y-1/2 rotate-45 border-l border-b border-lime-300 bg-white transition-colors duration-500 md:block group-hover:border-lime-400" />
+                  ) : (
+                    <span className="pointer-events-none absolute right-[-12px] top-1/2 hidden h-6 w-6 -translate-y-1/2 rotate-45 border-r border-t border-lime-300 bg-white transition-colors duration-500 md:block group-hover:border-lime-400" />
+                  )}
+                  {isRight ? (
+                    <span className="pointer-events-none absolute left-[-52px] top-1/2 hidden h-px w-10 -translate-y-1/2 bg-lime-400 md:block" />
+                  ) : (
+                    <span className="pointer-events-none absolute right-[-52px] top-1/2 hidden h-px w-10 -translate-y-1/2 bg-lime-400 md:block" />
+                  )}
+                  {isRight ? (
+                    <span className="pointer-events-none absolute left-[-62px] top-1/2 hidden h-6 w-6 -translate-y-1/2 place-items-center rounded-full bg-zinc-100 md:grid">
+                      <motion.span
+                        initial={reduceMotion ? undefined : { scale: 0.8, opacity: 0.7 }}
+                        whileInView={reduceMotion ? undefined : { scale: [1, 1.12, 1], opacity: [0.85, 1, 0.9] }}
+                        viewport={{ once: false, amount: 0.7 }}
+                        transition={{ duration: 1.1, ease: "easeInOut", delay: i * 0.04 }}
+                        className="h-3 w-3 rounded-full bg-lime-400"
+                      />
+                    </span>
+                  ) : (
+                    <span className="pointer-events-none absolute right-[-62px] top-1/2 hidden h-6 w-6 -translate-y-1/2 place-items-center rounded-full bg-zinc-100 md:grid">
+                      <motion.span
+                        initial={reduceMotion ? undefined : { scale: 0.8, opacity: 0.7 }}
+                        whileInView={reduceMotion ? undefined : { scale: [1, 1.12, 1], opacity: [0.85, 1, 0.9] }}
+                        viewport={{ once: false, amount: 0.7 }}
+                        transition={{ duration: 1.1, ease: "easeInOut", delay: i * 0.04 }}
+                        className="h-3 w-3 rounded-full bg-lime-400"
+                      />
+                    </span>
+                  )}
+
+                  <div className="flex items-start gap-4">
+                    <span
+                      className={`mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-full text-xs font-bold ${getBadgeTone(exp.company)}`}
+                    >
+                      {getBadgeText(exp.company)}
+                    </span>
+                    <span className="min-w-0">
+                      <p className="text-xs uppercase tracking-[0.18em] text-zinc-400">{exp.dates}</p>
+                      <p className="text-xl font-semibold tracking-[-0.02em] text-zinc-900">{exp.role}</p>
+                      <p className="text-sm text-zinc-600">{exp.company} | {exp.location}</p>
+                    </span>
+            </div>
+                </motion.button>
+              );
+            })}
+          </div>
+        </div>
+      </motion.section>
+
+      <motion.section
         id="about"
-        className="relative min-h-screen snap-start overflow-hidden border-t border-zinc-300/80 bg-[#ececec] px-6 py-20 md:px-10 lg:px-14"
+        className="relative min-h-screen overflow-hidden border-t border-zinc-300/80 bg-[#ececec] px-6 py-20 md:px-10 lg:px-14"
         initial={{ opacity: 0, y: 36 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7 }}
         viewport={{ once: true, amount: 0.12 }}
       >
+        <motion.div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 -top-20 h-24 bg-gradient-to-b from-zinc-300/25 to-transparent blur-xl"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, amount: 0.12 }}
+          transition={{ duration: 0.7 }}
+        />
         <div className="pointer-events-none absolute inset-0 opacity-80">
           <div className="absolute -left-8 top-20 h-80 w-80 border border-zinc-200/90" />
           <div className="absolute left-[20%] top-[44%] h-80 w-80 border border-zinc-200/90" />
           <div className="absolute inset-0 [background-image:linear-gradient(to_right,rgba(24,24,24,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(24,24,24,0.04)_1px,transparent_1px)] [background-size:150px_150px]" />
-        </div>
-
-        <div className="relative z-10 mx-auto w-full max-w-[1320px]">
-        <div className="mx-auto grid w-full max-w-[1320px] gap-6 lg:grid-cols-2">
-          <div className="rounded-[28px] border border-zinc-300 bg-white p-7">
-            <p className={sectionLabelStyle + ""}>{"{02} - Experience"}</p>
-            <div className="mt-6 space-y-5">
-              {resumeData.experience.map((exp, i) => (
-                <motion.button
-                  type="button"
-                  key={`${exp.company}-${exp.role}`}
-                  initial={reduceMotion ? undefined : { opacity: 0, y: 20 }}
-                  whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.35 }}
-                  transition={{ duration: 0.5, delay: i * 0.06 }}
-                  onClick={() => setActiveExperienceIndex(i)}
-                  className="flex w-full items-start gap-3 text-left transform-gpu translate-y-0 will-change-transform transition-[transform,color] duration-500 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5"
-                >
-                  <span className={`mt-1 grid h-10 w-10 shrink-0 place-items-center rounded-full text-xs font-bold ${getBadgeTone(exp.company)}`}>
-                    {getBadgeText(exp.company)}
-                  </span>
-                  <span>
-                    <p className="text-xl font-semibold tracking-[-0.02em]">{exp.role}</p>
-                    <p className="text-sm text-zinc-500">{exp.company} | {exp.location}</p>
-                    <p className="text-xs uppercase tracking-[0.18em] text-zinc-400">{exp.dates}</p>
-                  </span>
-                </motion.button>
-              ))}
-            </div>
           </div>
 
-          <div className="rounded-[28px] border border-zinc-300 bg-white p-7">
+        <div className="relative z-10 mx-auto w-full max-w-[1320px]">
+          <div className="mx-auto w-full max-w-[980px] rounded-[28px] border border-zinc-300 bg-white p-7">
             <p className={sectionLabelStyle + ""}>{"{03} - Skills"}</p>
             <div className="mt-6 space-y-4">
               {resumeData.skills.map((group, i) => (
@@ -674,9 +939,8 @@ export default function Portfolio() {
               ))}
             </div>
           </div>
-        </div>
 
-        <div id="internet" className="mt-8 w-full">
+          <div id="internet" className="mt-8 w-full">
           <div className="p-8 md:p-12">
             <div>
               <p className="mb-4 inline-flex items-center gap-2 text-3xl font-medium text-zinc-500">
@@ -692,11 +956,11 @@ export default function Portfolio() {
                   href={githubUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="group rounded-3xl border border-zinc-200 bg-white p-8 transform-gpu translate-y-0 will-change-transform transition-[transform,box-shadow,background-color,color,border-color] duration-500 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:shadow-[0_16px_30px_rgba(15,23,42,0.12)]"
+                  className="smooth-hover-green group rounded-3xl border border-zinc-200 bg-white p-8"
                 >
                   <p className="text-4xl font-medium tracking-[-0.02em]">GitHub</p>
                   <div className="mt-20 flex justify-end">
-                    <span className="grid h-14 w-14 place-items-center rounded-full bg-lime-400 text-zinc-900 transform-gpu scale-100 transition-transform duration-500 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105">
+                    <span className="grid h-14 w-14 place-items-center rounded-full bg-lime-400 text-zinc-900 transform-gpu rotate-0 transition-transform duration-900 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] group-hover:rotate-[360deg]">
                       <Github size={22} />
                     </span>
                   </div>
@@ -706,11 +970,11 @@ export default function Portfolio() {
                   href={instagramUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="group rounded-3xl border border-zinc-200 bg-white p-8 transform-gpu translate-y-0 will-change-transform transition-[transform,box-shadow,background-color,color,border-color] duration-500 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:shadow-[0_16px_30px_rgba(15,23,42,0.12)]"
+                  className="smooth-hover-green group rounded-3xl border border-zinc-200 bg-white p-8"
                 >
                   <p className="text-4xl font-medium tracking-[-0.02em]">Instagram</p>
                   <div className="mt-20 flex justify-end">
-                    <span className="grid h-14 w-14 place-items-center rounded-full bg-lime-400 text-zinc-900 transform-gpu scale-100 transition-transform duration-500 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105">
+                    <span className="grid h-14 w-14 place-items-center rounded-full bg-lime-400 text-zinc-900 transform-gpu rotate-0 transition-transform duration-900 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] group-hover:rotate-[360deg]">
                       <Instagram size={22} />
                     </span>
                   </div>
@@ -720,11 +984,11 @@ export default function Portfolio() {
                   href={linkedInUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="group rounded-3xl border border-zinc-200 bg-white p-8 transform-gpu translate-y-0 will-change-transform transition-[transform,box-shadow,background-color,color,border-color] duration-500 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:shadow-[0_16px_30px_rgba(15,23,42,0.12)]"
+                  className="smooth-hover-green group rounded-3xl border border-zinc-200 bg-white p-8"
                 >
                   <p className="text-4xl font-medium tracking-[-0.02em]">LinkedIn</p>
                   <div className="mt-20 flex justify-end">
-                    <span className="grid h-14 w-14 place-items-center rounded-full bg-lime-400 text-zinc-900 transform-gpu scale-100 transition-transform duration-500 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105">
+                    <span className="grid h-14 w-14 place-items-center rounded-full bg-lime-400 text-zinc-900 transform-gpu rotate-0 transition-transform duration-900 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] group-hover:rotate-[360deg]">
                       <Linkedin size={22} />
                     </span>
                   </div>
@@ -733,7 +997,7 @@ export default function Portfolio() {
                 <button
                   type="button"
                   onClick={handleCopyEmail}
-                  className="group rounded-3xl bg-lime-400 p-8 text-zinc-900 transform-gpu translate-y-0 will-change-transform transition-[transform,box-shadow,background-color,color,border-color] duration-500 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:shadow-[0_18px_44px_rgba(132,255,55,0.45)]"
+                  className="smooth-hover-green group rounded-3xl bg-lime-400 p-8 text-zinc-900"
                 >
                   <p className="text-4xl font-medium tracking-[-0.02em]">
                     {emailCopied ? "Email copied" : "Get in touch"}
@@ -748,19 +1012,27 @@ export default function Portfolio() {
               </div>
             </div>
           </div>
-        </div>
+          </div>
         </div>
       </motion.section>
 
       <motion.section
         id="final-contact"
         data-dark-surface="true"
-        className="min-h-screen snap-start border-t border-zinc-800 bg-[#07090d] px-6 py-10 text-white md:px-10 lg:px-14"
+        className="relative min-h-screen border-t border-zinc-800 bg-[#07090d] px-6 py-10 text-white md:px-10 lg:px-14"
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.65 }}
         viewport={{ once: true, amount: 0.18 }}
       >
+        <motion.div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 -top-20 h-24 bg-gradient-to-b from-white/10 to-transparent blur-xl"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, amount: 0.12 }}
+          transition={{ duration: 0.7 }}
+        />
         <div className="mx-auto w-full max-w-[1320px]">
           <div className="mb-8 flex items-center justify-between border-b border-zinc-800 pb-5">
             <p className="inline-flex items-center gap-2 text-zinc-300">
@@ -777,7 +1049,7 @@ export default function Portfolio() {
                   window.scrollTo({ top: 0, behavior: "smooth" });
                 }
               }}
-              className="group inline-flex items-center gap-3 text-zinc-400 transform-gpu translate-y-0 transition-[transform,color] duration-500 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:text-white"
+              className="smooth-hover-green-soft group inline-flex items-center gap-3 rounded-full border border-zinc-700/80 bg-zinc-900/70 px-3 py-2 pl-5 text-zinc-300 backdrop-blur-sm hover:text-white"
             >
               Back to top
               <span className="grid h-12 w-12 place-items-center rounded-full bg-white text-zinc-900 transform-gpu scale-100 transition-transform duration-500 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105">
@@ -835,6 +1107,7 @@ export default function Portfolio() {
               <p className="text-xl text-zinc-400">Contact me</p>
               <a
                 href={`mailto:${resumeData.basics.email}`}
+                onClick={handleEmailLinkClick}
                 className="mt-1 block text-[clamp(1.45rem,3vw,2.85rem)] font-semibold tracking-[-0.03em] hover:text-lime-400"
               >
                 {resumeData.basics.email}
@@ -843,17 +1116,6 @@ export default function Portfolio() {
                 Reach out if you&apos;re looking for a fast, reliable engineer who can take AI products from idea to production!
               </p>
 
-              <div className="mt-10">
-                <a
-                  href={`mailto:${resumeData.basics.email}`}
-                  className="group inline-flex items-center gap-4 rounded-full bg-lime-400 px-7 py-3.5 text-2xl font-medium text-zinc-900 shadow-[0_0_45px_rgba(132,255,55,0.32)] transform-gpu translate-y-0 will-change-transform transition-[transform,box-shadow,background-color,color,border-color] duration-500 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:shadow-[0_0_56px_rgba(132,255,55,0.5)]"
-                >
-                  Book a call
-                  <span className="grid h-11 w-11 place-items-center rounded-full bg-white/85 transition-transform duration-500 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] group-hover:rotate-45">
-                    <ArrowUpRight size={19} />
-                  </span>
-                </a>
-              </div>
             </div>
           </div>
         </div>
@@ -862,17 +1124,17 @@ export default function Portfolio() {
       <AnimatePresence>
         {activeExperience && (
           <motion.div
-            className="fixed inset-0 z-[90] flex items-end justify-center bg-black/45 p-4 md:items-center"
+            className="fixed inset-0 z-[90] flex items-end justify-center bg-black/40 p-4 backdrop-blur-[2px] md:items-center"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setActiveExperienceIndex(null)}
           >
             <motion.div
-              initial={{ y: "100%", opacity: 0.95 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: "100%", opacity: 0.95 }}
-              transition={{ type: "spring", stiffness: 130, damping: 18 }}
+              initial={{ y: 64, opacity: 0, scale: 0.97 }}
+              animate={{ y: 0, opacity: 1, scale: 1 }}
+              exit={{ y: 52, opacity: 0, scale: 0.98 }}
+              transition={{ type: "spring", stiffness: 165, damping: 24, mass: 0.7 }}
               onClick={(event) => event.stopPropagation()}
               className="w-full max-w-2xl rounded-3xl border border-zinc-300 bg-white p-7 shadow-2xl"
             >
@@ -904,13 +1166,29 @@ export default function Portfolio() {
                   <X size={16} />
                 </button>
       </div>
-              <ul className="space-y-3">
+              <motion.ul
+                initial="hidden"
+                animate="show"
+                variants={{
+                  hidden: {},
+                  show: { transition: { staggerChildren: 0.08, delayChildren: 0.08 } },
+                }}
+                className="space-y-3"
+              >
                 {activeExperience.bullets.map((bullet) => (
-                  <li key={bullet} className="text-sm leading-relaxed text-zinc-600">
+                  <motion.li
+                    key={bullet}
+                    variants={{
+                      hidden: { opacity: 0, y: 8 },
+                      show: { opacity: 1, y: 0 },
+                    }}
+                    transition={{ duration: 0.35 }}
+                    className="text-sm leading-relaxed text-zinc-600"
+                  >
                     - {bullet}
-                  </li>
+                  </motion.li>
                 ))}
-              </ul>
+              </motion.ul>
             </motion.div>
           </motion.div>
         )}

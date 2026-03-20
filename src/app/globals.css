@@ -24,3 +24,43 @@ body {
   transition: background-color 420ms cubic-bezier(0.22, 1, 0.36, 1),
     color 420ms cubic-bezier(0.22, 1, 0.36, 1);
 }
+
+.smooth-hover-green {
+  transform: translateY(0);
+  will-change: transform;
+  transition-property: transform, box-shadow, background-color, color, border-color;
+  transition-duration: 500ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.smooth-hover-green:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 0 1px rgba(132, 255, 55, 0.35),
+    0 18px 40px rgba(132, 255, 55, 0.2);
+}
+
+.smooth-hover-green-soft {
+  transform: translateY(0);
+  will-change: transform;
+  transition-property: transform, box-shadow, background-color, color, border-color;
+  transition-duration: 500ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.smooth-hover-green-soft:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 34px rgba(132, 255, 55, 0.2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .smooth-hover-green,
+  .smooth-hover-green-soft,
+  .smooth-hover-green:hover {
+    transform: none;
+    box-shadow: none;
+  }
+  .smooth-hover-green-soft:hover {
+    transform: none;
+    box-shadow: none;
+  }
+}

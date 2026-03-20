@@ -2,7 +2,7 @@
   "basics": {
     "name": "KESHAV RAO",
     "title": "Software Developer & AI/ML Engineer",
-    "summary": "AI/ML Engineer and Software Developer specializing in Generative AI, RAG microservices, and scalable cloud architectures. Proven track record in developing high-accuracy predictive models and optimizing LLM workflows.",
+    "summary": "AI/ML Engineer and Software Developer specializing in Generative AI, RAG microservices, MCP orchestration, and scalable cloud architectures. Proven track record in developing high-accuracy predictive models and optimizing LLM workflows.",
     "location": "Los Angeles, California",
     "email": "keshavrao0711@gmail.com",
     "phone": "(213) 696-2369",
@@ -48,6 +48,16 @@
   ],
   "experience":[
     {
+      "company": "Easley Dunn Productions Inc.",
+      "role": "Software Developer",
+      "location": "Los Angeles, CA",
+      "dates": "February 2026-Current",
+      "bullets":[
+        "Part of the Gameplay Analyzer team where we take video footage of older gameplay and try to better understand logic to train our AI model.",
+        "Building logic for NPCs in an american football game that is currently in development."
+      ]
+    },
+    {
       "company": "Dataflix",
       "role": "Software Developer Intern",
       "location": "Hayward, CA",
@@ -55,7 +65,10 @@
       "bullets":[
         "Built and deployed cloud-hosted SaaS web applications and backend APIs using IBM watsonx Assistant, implementing intent classification, slot-filling, and multi-turn conversational workflows.",
         "Optimized responses from foundation models (Granite, Llama-2, Mistral) using prompt engineering, temperature tuning, and decoding strategies.",
-        "Built API orchestration workflows integrating backend services and microservices into multi-turn conversational systems."
+        "Built API orchestration workflows integrating backend services and microservices into multi-turn conversational systems.",
+        "Shipped React/TypeScript UI and Node.js REST APIs powering LLM customer support agents to production for enterprise clients, serving ~1K users via IBM watsonx.",
+        "Improved response quality by ~30% across Granite, Llama-2, and Mistral model families through structured prompt design and decoding optimization.",
+        "Optimized end-to-end inference latency by ~15% through model selection tuning and response caching, enabling real-time agent responses at production scale."
       ]
     },
     {
@@ -66,7 +79,8 @@
       "bullets":[
         "Designed AI-based resource allocation algorithms using Monte Carlo Tree Search (MCTS) and Iterative Deepening DFS, reducing scheduling latency by 20% in edge-cloud simulations.",
         "Improved scalability of service function chaining by integrating disjoint-set union-find structures within the VAPNIC framework across 50+ distributed nodes.",
-        "Built a modular edge-cloud orchestration system supporting multiple schedulers and advanced data structures (Van Emde Boas trees), improving simulation efficiency by 25%."
+        "Built a modular edge-cloud orchestration system supporting multiple schedulers and advanced data structures (Van Emde Boas trees), improving simulation efficiency by 25%.",
+        "Designed and implemented scheduling algorithms for compute tasks across edge and cloud infrastructure, improving distributed system throughput and scalability."
       ]
     },
     {
@@ -120,7 +134,9 @@
       "bullets":[
         "Developed microservice-based REST APIs for web applications enabling natural language search over enterprise document repositories using Elasticsearch semantic retrieval.",
         "Designed server-side retrieval workflows and backend services integrating Claude via MCP server orchestration for contextaware responses.",
-        "Built a React-based interactive web application integrating Stable Diffusion XL to generate marketing assets from datasets."
+        "Built a React-based interactive web application integrating Stable Diffusion XL to generate marketing assets from datasets.",
+        "Implemented TypeScript/Node.js middleware using Elasticsearch as a dual-purpose vector and keyword search engine with embedding, chunking, reranking, and MCP-based model calls.",
+        "Achieved <1.5s retrieval latency and reduced hallucinations through retrieval evaluation and iterative tuning of chunk size, overlap, and prompt templates."
       ]
     },
     {
@@ -129,7 +145,8 @@
       "bullets":[
         "Built an AI automation platform integrating Stable Diffusion XL with a React interface with generation of marketing assets from structured datasets.",
         "Developed backend inference pipelines and server-side processing services using PyTorch and HuggingFace Diffusers with persistent model caching.",
-        "Designed batch generation workflows enabling scalable asset creation from client data."
+        "Designed batch generation workflows enabling scalable asset creation from client data.",
+        "Built an end-to-end pipeline to generate personalized recruiter outreach emails and marketing assets at scale, reducing asset creation time by 20%."
       ]
     },
     {
@@ -138,7 +155,8 @@
       "bullets":[
         "Developed a machine learning pipeline for phishing webpage detection, achieving 90.75% average accuracy (92% peak).",
         "Improved model performance by 3.5% using hyperparameter tuning, early stopping, and learning-rate scheduling.",
-        "Built a React and TypeScript interactive web dashboard to visualize model predictions and training metrics."
+        "Built a React and TypeScript interactive web dashboard to visualize model predictions and training metrics.",
+        "Implemented real-time prediction visualization through REST API integration."
       ]
     }
   ],
@@ -149,15 +167,15 @@
     },
     {
       "category": "Frameworks",
-      "items":["React", "Node.js", "REST APIs", "Microservices", "TensorFlow", "PyTorch", "Keras", "Hugging Face"]
+      "items":["React", "Node.js", "FastAPI", "REST APIs", "Microservices", "TensorFlow", "PyTorch", "Keras", "Hugging Face"]
     },
     {
       "category": "AI / ML",
-      "items":["Large Language Models (LLMs)", "RAG Systems", "Generative AI", "Prompt Engineering", "Inference Pipelines", "Model Optimization"]
+      "items":["Large Language Models (LLMs)", "RAG Systems", "Generative AI", "Prompt Engineering", "Inference Pipelines", "Model Optimization", "Semantic Search", "Elasticsearch", "MCP Orchestration"]
     },
     {
       "category": "Cloud & Tools",
-      "items":["IBM watsonx", "Google Cloud Platform", "AWS", "Docker", "Cloud Deployment", "Apache Iceberg", "Parquet", "Git"]
+      "items":["IBM watsonx", "Google Cloud Platform", "GCP", "AWS", "Docker", "Cloud Deployment", "Apache Iceberg", "Parquet", "Git"]
     }
   ],
   "certifications": [
