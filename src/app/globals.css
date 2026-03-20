@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+@media (pointer: fine) {
+  html,
+  body,
+  a,
+  button,
+  [role="button"],
+  [data-clickable="true"] {
+    cursor: none !important;
+  }
+}
+
+html,
+body {
+  transition: background-color 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    color 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}

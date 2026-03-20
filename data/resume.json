@@ -1,0 +1,177 @@
+{
+  "basics": {
+    "name": "KESHAV RAO",
+    "title": "Software Developer & AI/ML Engineer",
+    "summary": "AI/ML Engineer and Software Developer specializing in Generative AI, RAG microservices, and scalable cloud architectures. Proven track record in developing high-accuracy predictive models and optimizing LLM workflows.",
+    "location": "Los Angeles, California",
+    "email": "keshavrao0711@gmail.com",
+    "phone": "(213) 696-2369",
+    "links":[
+      {
+        "platform": "LinkedIn",
+        "url": "https://www.linkedin.com/in/keshav-rao-127ks/"
+          },
+          {
+            "platform": "GitHub",
+            "url": "https://github.com/KeshavRao-exe/KeshavRao-exe.github.io"
+          },
+          {
+            "platform": "Instagram",
+            "url": "https://www.instagram.com/kesh.av_rao/"
+      }
+    ]
+  },
+  "education":[
+    {
+      "institution": "University of Southern California",
+      "location": "Los Angeles, California",
+      "degree": "Master of Science in Computer Science",
+      "dates": "January 2024-December 2025",
+      "bullets":[
+        "Relevant coursework: Artificial Intelligence, Natural Language Processing, Algorithms, Machine Learning, Distributed Systems"
+      ]
+    },
+    {
+      "institution": "SRM Institute of Science and Technology",
+      "location": "Chennai, India",
+      "degree": "Bachelor of Technology in Computer Science and Engineering",
+      "dates": "June 2019-May 2023",
+      "bullets": []
+    },
+    {
+      "institution": "Asia University (TW)",
+      "location": "Taiwan",
+      "degree": "Exchange Program, Digital Image Processing",
+      "dates": "February 2022-June 2022",
+      "bullets": []
+    }
+  ],
+  "experience":[
+    {
+      "company": "Dataflix",
+      "role": "Software Developer Intern",
+      "location": "Hayward, CA",
+      "dates": "August 2025-December 2025",
+      "bullets":[
+        "Built and deployed cloud-hosted SaaS web applications and backend APIs using IBM watsonx Assistant, implementing intent classification, slot-filling, and multi-turn conversational workflows.",
+        "Optimized responses from foundation models (Granite, Llama-2, Mistral) using prompt engineering, temperature tuning, and decoding strategies.",
+        "Built API orchestration workflows integrating backend services and microservices into multi-turn conversational systems."
+      ]
+    },
+    {
+      "company": "École de technologie supérieure (ÉTS)",
+      "role": "Research Intern",
+      "location": "Montreal, Canada",
+      "dates": "July 2022-September 2022",
+      "bullets":[
+        "Designed AI-based resource allocation algorithms using Monte Carlo Tree Search (MCTS) and Iterative Deepening DFS, reducing scheduling latency by 20% in edge-cloud simulations.",
+        "Improved scalability of service function chaining by integrating disjoint-set union-find structures within the VAPNIC framework across 50+ distributed nodes.",
+        "Built a modular edge-cloud orchestration system supporting multiple schedulers and advanced data structures (Van Emde Boas trees), improving simulation efficiency by 25%."
+      ]
+    },
+    {
+      "company": "SRM Institute of Science and Technology",
+      "role": "Research Assistant",
+      "location": "Chennai, India",
+      "dates": "September 2021-February 2022",
+      "bullets":[
+        "Built machine learning models (Decision Tree, Random Forest, XGBoost) for coronary artery disease prediction using 1,000+ patient records, achieving 98% classification accuracy.",
+        "Reduced required diagnostic tests by 50% by identifying key predictive features through feature importance analysis."
+      ]
+    },
+    {
+      "company": "My Equation",
+      "role": "Software Developer",
+      "location": "India",
+      "dates": "November 2021-February 2022",
+      "bullets":[
+        "Engineered modular, reusable frontend architecture using React.js and TypeScript, emphasizing scalability and maintainability.",
+        "Designed and integrated RESTful services with structured API configuration, request lifecycle management, and robust error handling.",
+        "Implemented efficient state management and optimized asynchronous data flows to improve reliability of frontend-backend interactions."
+      ]
+    }
+  ],
+  "achievements":[
+    {
+      "metric": "98%",
+      "context": "Classification accuracy achieved in ML models for coronary artery disease prediction using 1,000+ patient records."
+    },
+    {
+      "metric": "50%",
+      "context": "Reduction in required diagnostic tests by identifying key predictive features through feature importance analysis."
+    },
+    {
+      "metric": "25%",
+      "context": "Improvement in simulation efficiency by building a modular edge-cloud orchestration system."
+    },
+    {
+      "metric": "20%",
+      "context": "Reduction in scheduling latency in edge-cloud simulations using MCTS and Iterative Deepening DFS."
+    },
+    {
+      "metric": "90.75%",
+      "context": "Average accuracy (92% peak) achieved in a machine learning pipeline for phishing webpage detection."
+    }
+  ],
+  "projects":[
+    {
+      "title": "AI Knowledge Platform (RAG Microservices + MCP)",
+      "stack": "Python, FastAPI, Elasticsearch, Claude, MCP",
+      "bullets":[
+        "Developed microservice-based REST APIs for web applications enabling natural language search over enterprise document repositories using Elasticsearch semantic retrieval.",
+        "Designed server-side retrieval workflows and backend services integrating Claude via MCP server orchestration for contextaware responses.",
+        "Built a React-based interactive web application integrating Stable Diffusion XL to generate marketing assets from datasets."
+      ]
+    },
+    {
+      "title": "AI Automation Platform for Generative Content",
+      "stack": "Python, PyTorch, Stable Diffusion XL, React",
+      "bullets":[
+        "Built an AI automation platform integrating Stable Diffusion XL with a React interface with generation of marketing assets from structured datasets.",
+        "Developed backend inference pipelines and server-side processing services using PyTorch and HuggingFace Diffusers with persistent model caching.",
+        "Designed batch generation workflows enabling scalable asset creation from client data."
+      ]
+    },
+    {
+      "title": "Phishing Webpage Detection System",
+      "stack": "TensorFlow, Keras, React, TypeScript",
+      "bullets":[
+        "Developed a machine learning pipeline for phishing webpage detection, achieving 90.75% average accuracy (92% peak).",
+        "Improved model performance by 3.5% using hyperparameter tuning, early stopping, and learning-rate scheduling.",
+        "Built a React and TypeScript interactive web dashboard to visualize model predictions and training metrics."
+      ]
+    }
+  ],
+  "skills":[
+    {
+      "category": "Languages",
+      "items":["Python", "Java (Spring)", "JavaScript", "TypeScript", "SQL", "C++", "Swift", "C"]
+    },
+    {
+      "category": "Frameworks",
+      "items":["React", "Node.js", "REST APIs", "Microservices", "TensorFlow", "PyTorch", "Keras", "Hugging Face"]
+    },
+    {
+      "category": "AI / ML",
+      "items":["Large Language Models (LLMs)", "RAG Systems", "Generative AI", "Prompt Engineering", "Inference Pipelines", "Model Optimization"]
+    },
+    {
+      "category": "Cloud & Tools",
+      "items":["IBM watsonx", "Google Cloud Platform", "AWS", "Docker", "Cloud Deployment", "Apache Iceberg", "Parquet", "Git"]
+    }
+  ],
+  "certifications": [
+    "Integrate with Machine Learning APIs",
+    "The Complete React Developer Course (w/ Hooks and Redux)",
+    "Perform Foundational Infrastructure Tasks in Google Cloud",
+    "Technothon 1.0 - 4th Position / 40+ teams",
+    "Oracle Cloud Infrastructure Foundations 2021 Certified Associate"
+  ],
+  "awards":[],
+  "extra":[
+    {
+      "type": "Publication",
+      "content": "B. Balakrishnan, K. Kumaran, A. Sankar and K. Rao, \"Coronary Artery Disease Prediction using Machine Learning Algorithms,\" 2022 pp. 95-100, doi: 10.1109/ICESIC53714.2022.9783592"
+    }
+  ]
+}
