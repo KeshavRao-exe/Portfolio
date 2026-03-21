@@ -13,11 +13,21 @@ import {
 } from "framer-motion";
 import {
   ArrowUpRight,
+  BrainCircuit,
+  Braces,
   BookOpen,
+  Cloud,
+  Code2,
+  Cpu,
+  Database,
+  GitBranch,
   Github,
   Instagram,
   Linkedin,
   Mail,
+  Server,
+  Wrench,
+  type LucideIcon,
   X,
 } from "lucide-react";
 import resumeData from "../../data/resume.json";
@@ -50,6 +60,48 @@ function getUniversityBadgeSrc(label: string) {
   if (label.includes("SRM")) return "/assets/images/SRM.png";
   if (label.includes("Asia University")) return "/assets/images/AU.png";
   return null;
+}
+
+function getSkillCategoryIcon(category: string): LucideIcon {
+  const value = category.toLowerCase();
+  if (value.includes("language")) return Braces;
+  if (value.includes("framework")) return Code2;
+  if (value.includes("ai")) return BrainCircuit;
+  if (value.includes("cloud")) return Cloud;
+  return Wrench;
+}
+
+function getSkillIcon(skill: string): LucideIcon {
+  const value = skill.toLowerCase();
+  if (
+    value.includes("llm") ||
+    value.includes("rag") ||
+    value.includes("ai") ||
+    value.includes("ml") ||
+    value.includes("tensorflow") ||
+    value.includes("pytorch") ||
+    value.includes("keras") ||
+    value.includes("hugging")
+  ) {
+    return BrainCircuit;
+  }
+  if (value.includes("cloud") || value.includes("aws") || value.includes("gcp") || value.includes("watsonx")) {
+    return Cloud;
+  }
+  if (value.includes("docker") || value.includes("deployment")) return Server;
+  if (value.includes("git")) return GitBranch;
+  if (value.includes("sql") || value.includes("parquet") || value.includes("iceberg")) return Database;
+  if (
+    value.includes("react") ||
+    value.includes("node") ||
+    value.includes("typescript") ||
+    value.includes("javascript") ||
+    value.includes("api") ||
+    value.includes("microservice")
+  ) {
+    return Code2;
+  }
+  return Cpu;
 }
 
 function parseRgbChannels(color: string): [number, number, number] | null {
@@ -453,6 +505,15 @@ export default function Portfolio() {
               </div>
               <p className="text-[30px] font-semibold leading-none tracking-[-0.03em]">{firstName} {lastName}</p>
               <p className="mt-1 text-base text-zinc-500">AI/ML engineer, developer</p>
+              <a
+                href="/assets/Keshav_Rao_Resume.pdf"
+                target="_blank"
+                rel="noreferrer"
+                className="smooth-hover-green mt-4 inline-flex items-center gap-2 rounded-full border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700"
+              >
+                View Resume
+                <ArrowUpRight size={14} />
+              </a>
               <div className="mt-4 flex items-center gap-3 text-zinc-500">
                 <a href={githubUrl} target="_blank" rel="noreferrer" className="hover:text-zinc-800"><Github size={19} /></a>
                 <a href={instagramUrl} target="_blank" rel="noreferrer" className="hover:text-zinc-800"><Instagram size={19} /></a>
@@ -723,8 +784,8 @@ export default function Portfolio() {
             {resumeData.projects.map((project, i) => (
               <motion.article
                 key={project.title}
-                initial={reduceMotion ? undefined : { opacity: 0, y: 24 }}
-                whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+                initial={reduceMotion ? undefined : { y: 24 }}
+                whileInView={reduceMotion ? undefined : { y: 0 }}
                 viewport={{ once: true, amount: 0.35 }}
                 transition={{ duration: 0.55, delay: i * 0.06 }}
                 className={`sticky flex h-[56vh] flex-col justify-between rounded-[28px] border border-lime-400/35 bg-zinc-900/92 p-8 shadow-[0_0_0_1px_rgba(132,255,55,0.14),0_0_36px_rgba(132,255,55,0.12)] backdrop-blur-sm transition-[box-shadow,border-color] duration-500 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] hover:border-lime-400/55 hover:shadow-[0_0_0_1px_rgba(132,255,55,0.24),0_0_56px_rgba(132,255,55,0.2)] ${
@@ -918,7 +979,7 @@ export default function Portfolio() {
         <div className="relative z-10 mx-auto w-full max-w-[1320px]">
           <div className="mx-auto w-full max-w-[980px] rounded-[28px] border border-zinc-300 bg-white p-7">
             <p className={sectionLabelStyle + ""}>{"{03} - Skills"}</p>
-            <div className="mt-6 space-y-4">
+            <div className="mt-6 grid gap-5 md:grid-cols-2">
               {resumeData.skills.map((group, i) => (
                 <motion.div
                   key={group.category}
@@ -926,14 +987,36 @@ export default function Portfolio() {
                   whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.35 }}
                   transition={{ duration: 0.5, delay: i * 0.06 }}
+                  className="rounded-2xl border border-zinc-200 bg-zinc-50/70 p-4 md:p-5"
                 >
-                  <p className="mb-2 text-sm font-semibold uppercase tracking-[0.15em] text-zinc-600">{group.category}</p>
-                  <div className="flex flex-wrap gap-2">
-                    {group.items.slice(0, 8).map((skill) => (
-                      <span key={skill} className="rounded-full border border-zinc-300 px-3 py-1 text-xs text-zinc-700">
-                        {skill}
+                  <div className="mb-3 flex items-center gap-2.5">
+                    {(() => {
+                      const CategoryIcon = getSkillCategoryIcon(group.category);
+                      return (
+                        <span className="grid h-8 w-8 place-items-center rounded-full bg-lime-400/20 text-lime-600">
+                          <CategoryIcon size={16} />
+                        </span>
+                      );
+                    })()}
+                    <p className="text-sm font-semibold uppercase tracking-[0.15em] text-zinc-600">
+                      {group.category}
+                    </p>
+                  </div>
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    {group.items.map((skill) => {
+                      const SkillIcon = getSkillIcon(skill);
+                      return (
+                        <div
+                          key={skill}
+                          className="smooth-hover-green flex items-center gap-2.5 rounded-xl border border-zinc-200 bg-white px-3 py-2.5"
+                        >
+                          <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-zinc-900 text-lime-400">
+                            <SkillIcon size={14} />
                       </span>
-                    ))}
+                          <span className="truncate text-xs font-medium text-zinc-700">{skill}</span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </motion.div>
               ))}
@@ -952,6 +1035,20 @@ export default function Portfolio() {
               </h3>
 
               <div className="mt-10 grid gap-4 md:grid-cols-2">
+                <a
+                  href={linkedInUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="smooth-hover-green group rounded-3xl border border-zinc-200 bg-white p-8"
+                >
+                  <p className="text-4xl font-medium tracking-[-0.02em]">LinkedIn</p>
+                  <div className="mt-20 flex justify-end">
+                    <span className="grid h-14 w-14 place-items-center rounded-full bg-lime-400 text-zinc-900 transform-gpu rotate-0 transition-transform duration-900 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] group-hover:rotate-[360deg]">
+                      <Linkedin size={22} />
+                    </span>
+                  </div>
+                </a>
+
                 <a
                   href={githubUrl}
                   target="_blank"
@@ -980,24 +1077,10 @@ export default function Portfolio() {
                   </div>
                 </a>
 
-                <a
-                  href={linkedInUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="smooth-hover-green group rounded-3xl border border-zinc-200 bg-white p-8"
-                >
-                  <p className="text-4xl font-medium tracking-[-0.02em]">LinkedIn</p>
-                  <div className="mt-20 flex justify-end">
-                    <span className="grid h-14 w-14 place-items-center rounded-full bg-lime-400 text-zinc-900 transform-gpu rotate-0 transition-transform duration-900 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] group-hover:rotate-[360deg]">
-                      <Linkedin size={22} />
-                    </span>
-                  </div>
-                </a>
-
                 <button
                   type="button"
                   onClick={handleCopyEmail}
-                  className="smooth-hover-green group rounded-3xl bg-lime-400 p-8 text-zinc-900"
+                  className="smooth-hover-green group flex min-h-[260px] flex-col justify-center rounded-3xl bg-lime-400 p-8 text-zinc-900"
                 >
                   <p className="text-4xl font-medium tracking-[-0.02em]">
                     {emailCopied ? "Email copied" : "Get in touch"}
@@ -1071,7 +1154,7 @@ export default function Portfolio() {
                 <span className="text-lime-400">.</span>
               </h3>
               <p className="mt-8 text-3xl font-medium text-zinc-400">Let&apos;s make an impact</p>
-            </div>
+          </div>
 
             <div className="relative lg:col-span-6">
               <div className="mb-9 flex items-start gap-4">
@@ -1093,7 +1176,7 @@ export default function Portfolio() {
                     <div className="grid h-full w-full place-items-center text-xl font-bold text-white">KR</div>
                   )}
                 </div>
-                <div>
+          <div>
                   <p className="text-4xl font-semibold tracking-[-0.03em]">{firstName} {lastName}</p>
                   <p className="text-xl text-zinc-400">Software Engineer | AI Systems</p>
                   <div className="mt-3 flex items-center gap-3 text-zinc-400">
